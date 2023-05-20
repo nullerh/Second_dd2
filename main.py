@@ -15,8 +15,9 @@ import numpy as np
 
 def main():
     seed = 2019
-    h5_directory = 'D:/dosed'
+    #h5_directory = 'D:/dosed'
     #h5_directory = "C:/Users/Nullerh/Documents/DTU_SCHOOL_WORK/dosed_no_change/data/h5"
+    h5_directory = '/scratch/s194277/mros/h5_full/'
     train, validation, test = get_train_validation_test(h5_directory,
                                                         percent_test=10,
                                                         percent_validation=15,
@@ -220,7 +221,7 @@ def main():
 
     default_event_sizes = [3, 15, 30]
     k_max = 9
-    kernel_size = 5
+    kernel_size = 3
     probability_dropout = 0.1
     device = torch.device("cuda")
 
