@@ -9,7 +9,8 @@ from dosed.models import DOSED3 as model
 from dosed.datasets import get_train_validation_test
 from dosed.trainers import trainers
 from dosed.preprocessing import GaussianNoise, RescaleNormal, Invert
-
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 def main():
@@ -282,13 +283,10 @@ def main():
         batch_size=batch_size
     )
 
-    predictions = best_net_train.predict_dataset(
+    test_predictions = best_net_train.predict_dataset(
         dataset_test,
         best_threshold_train,
     )
-
-    import matplotlib.pyplot as plt
-    import numpy as np
 
     record = dataset_test.records[1]
 
@@ -296,8 +294,8 @@ def main():
     window_duration = 5
 
     # retrive spindle at the right index
-    spindle_start = float(predictions[record][0][index_spindle][0]) / sampling_frequency
-    spindle_end = float(predictions[record][0][index_spindle][1]) / sampling_frequency
+    spindle_start = float(test_predictions[record][0][index_spindle][0]) / sampling_frequency
+    spindle_end = float(test_predictions[record][0][index_spindle][1]) / sampling_frequency
 
     # center data window on annotated spindle
     start_window = spindle_start + (spindle_end - spindle_start) / 2 - window_duration
