@@ -26,7 +26,7 @@ def main():
     print("Number of records train:", len(train))
     print("Number of records validation:", len(validation))
     print("Number of records test:", len(test))
-    batch_size = 1
+    batch_size = 128
     window = 60  # window duration in seconds
     ratio_positive = 0.5  # When creating the batch, sample containing at least one spindle will be drawn with that probability
     torch.cuda.empty_cache()
