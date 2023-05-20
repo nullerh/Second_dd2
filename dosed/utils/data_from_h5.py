@@ -4,8 +4,8 @@ import numpy as np
 
 import h5py
 
-from ..preprocessing import normalizers
-from scipy.interpolate import interp1d
+#from ..preprocessing import normalizers
+#from scipy.interpolate import interp1d
 
 
 def get_h5_data(filename, signals, fs=64):
