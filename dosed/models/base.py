@@ -98,8 +98,6 @@ class BaseNet(nn.Module):
             assert len(predicted_events) == self.number_of_classes - 1
             for event_num in range(self.number_of_classes - 1):
                 predictions[record].append(predicted_events[event_num])
-            with open('predictions.json', 'rb') as fp:
-                json.dump(predictions, fp)
 
         return predictions
 
