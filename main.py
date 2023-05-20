@@ -221,7 +221,7 @@ def main():
 
     default_event_sizes = [3, 15, 30]
     k_max = 9
-    kernel_size = 3
+    kernel_size = 5
     probability_dropout = 0.1
     device = torch.device("cuda")
 
