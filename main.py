@@ -206,7 +206,7 @@ def main():
     }
 
     dataset_validation = dataset(records=validation, **dataset_parameters)
-    dataset_test = dataset(records=test, **dataset_parameters)
+    #dataset_test = dataset(records=test, **dataset_parameters)
 
     # for training add data augmentation
     dataset_parameters_train = {
