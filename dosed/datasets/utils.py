@@ -30,6 +30,6 @@ def get_train_validation_test(h5_directory,
     index_validation = int(len(records_train) * percent_validation / 100)
     random.shuffle(records_train)
     validation = records_train[:index_validation]
-    train = records_train[index_validation:][0::2]
+    train = records_train[index_validation:]
 
     return train, validation, test

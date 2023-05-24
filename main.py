@@ -19,15 +19,15 @@ def main():
     #h5_directory = "C:/Users/Nullerh/Documents/DTU_SCHOOL_WORK/dosed_no_change/data/h5"
     h5_directory = '/scratch/s194277/mros/h5_full/'
     train, validation, test = get_train_validation_test(h5_directory,
-                                                        percent_test=10,
-                                                        percent_validation=15,
+                                                        percent_test=0,
+                                                        percent_validation=10,
                                                         seed=seed)
 
     print("Number of records train:", len(train))
     print("Number of records validation:", len(validation))
     print("Number of records test:", len(test))
     batch_size = 128
-    window = 60  # window duration in seconds
+    window = 120  # window duration in seconds
     ratio_positive = 0.5  # When creating the batch, sample containing at least one spindle will be drawn with that probability
     torch.cuda.empty_cache()
     fs = 128
@@ -220,7 +220,7 @@ def main():
     dataset_train = dataset(records=train, **dataset_parameters_train)
 
     default_event_sizes = [3, 15, 30]
-    k_max = 9
+    k_max = 10
     kernel_size = 5
     probability_dropout = 0.1
     device = torch.device("cuda")
@@ -247,7 +247,7 @@ def main():
     net = net.to(device)
 
     optimizer_parameters = {
-        "lr": 5e-3,
+        "lr": 5e-4,
         "weight_decay": 1e-8,
     }
     loss_specs = {

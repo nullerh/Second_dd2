@@ -180,8 +180,9 @@ class TrainerBase:
             "num_workers": 0,
             "shuffle": True,
             "collate_fn": collate,
-            "pin_memory": False,
+            "pin_memory": True,
             "batch_size": batch_size,
+            'drop_last': True,
         }
         print("batch_size:", batch_size)
         dataloader_train = DataLoader(train_dataset, **dataloader_parameters)
