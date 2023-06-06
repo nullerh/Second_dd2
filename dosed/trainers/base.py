@@ -13,6 +13,10 @@ from torch.utils.data import DataLoader
 from ..datasets import collate
 from ..functions import (loss_functions, available_score_functions, compute_metrics_dataset)
 from ..utils import (match_events_localization_to_default_localizations, Logger)
+import matplotlib.pyplot as plt
+from typing import List, Optional, Tuple
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 
 
 class TrainerBase:
@@ -94,10 +98,11 @@ class TrainerBase:
         }
 
         # Compute predicted_events
-        thresholds = np.sort(
+        '''thresholds = np.sort(
             np.random.uniform(threshold_space["upper_bound"],
                               threshold_space["lower_bound"],
-                              threshold_space["num_samples"]))
+                              threshold_space["num_samples"]))'''
+        thresholds = np.array([0.0, 0.3, 0.5, 0.7, 0.9])
 
         for threshold in thresholds:
             metrics_thresh = compute_metrics_dataset(
@@ -181,12 +186,14 @@ class TrainerBase:
             "shuffle": True,
             "collate_fn": collate,
             "pin_memory": True,
-            "batch_size": batch_size,
+            "batch_size": 128,
             'drop_last': True,
         }
         print("batch_size:", batch_size)
+
         dataloader_train = DataLoader(train_dataset, **dataloader_parameters)
         dataloader_val = DataLoader(validation_dataset, **dataloader_parameters)
+
 
         metrics_final = {
             metric: 0
@@ -216,7 +223,10 @@ class TrainerBase:
             epoch_loss_localization_val = 0.0
 
             for i, data in enumerate(dataloader_train, 0):
-
+                '''s, e = data
+                plot_data(s[0], e[0], fs = 128,
+                    channel_names=['c3', 'c4', 'eogl', 'eogr', 'chin', 'legl', 'legr', 'abdo', 'thor', 'nasal'])
+                '''
                 # On batch start
                 self.on_batch_start()
 
@@ -241,6 +251,7 @@ class TrainerBase:
                 loss.backward()
                 # gradient descent
                 self.optimizer.step()
+
             epoch_loss_classification_positive_train /= (i + 1)
             epoch_loss_classification_negative_train /= (i + 1)
             epoch_loss_localization_train /= (i + 1)
@@ -319,3 +330,80 @@ class TrainerBase:
                 self.train_logger.dump_train_history()
 
         return best_net, metrics_final, best_threshold
+
+
+def legend_without_duplicate_labels(ax):
+    handles, labels = ax.get_legend_handles_labels()
+    unique = [(h, l) for i, (h, l) in enumerate(zip(handles, labels)) if l not in labels[:i]]
+    ax.legend(*zip(*unique), loc='upper right')
+
+
+def plot_data(
+        data: np.ndarray,
+        events: np.ndarray,
+        fs: int,
+        predictions: Optional[np.ndarray] = None,
+        channel_names: Optional[List[str]] = None,
+        title: Optional[str] = None,
+        ax: Optional[Axes] = None,
+        ind: Optional[int] = None,
+) -> Tuple[Figure, Axes]:
+    # Get current axes or create new
+    if ax is None:
+        fig, ax = plt.subplots(figsize=((24, 9)))
+        ax.set_xlabel("Time (s)")
+    else:
+        fig = ax.get_figure()
+        ax.tick_params(
+            axis="x",  # changes apply to the x-axis
+            which="both",  # both major and minor ticks are affected
+            bottom=False,  # ticks along the bottom edge are off
+            top=False,  # ticks along the top edge are off
+            labelbottom=False,
+        )  # labels along the bottom edge are off
+
+    font = {'family': 'Times new roman',
+            'weight': 'bold',
+            'size': 20}
+
+    plt.rc('font', **font)
+
+    C, T = data.shape
+    time_vector = np.arange(T) / fs
+
+    assert (
+            len(channel_names) == C
+    ), f"Channel names are inconsistent with number of channels in data. Received {channel_names=} and {data.shape=}"
+
+    event_label_dict = {0.0: 'Arousal', 1.0: 'Leg Movement', 2.0: 'Sleep-disordered Breathing'}
+    # Plot events
+    if True:
+        for event_label in np.unique(events[:, -1]):
+            if event_label == 0.0:
+                color = "r"
+            elif event_label == 1.0:
+                color = "yellow"
+            elif event_label == 2.0:
+                color = "cornflowerblue"
+            class_events = events[events[:, -1] == event_label, :-1] * T / fs
+            for evt_start, evt_stop in class_events:
+                label = np.unique(event_label_dict[event_label])
+                ax.axvspan(evt_start, evt_stop, facecolor=color, edgecolor=None, alpha=0.6, label=label)
+                legend_without_duplicate_labels(ax)
+    # Calculate the offset between signals
+    data = data.cpu().detach().numpy()
+
+    data = (
+        2
+        * (data - data.min(axis=-1, keepdims=True))
+        / (data.max(axis=-1, keepdims=True) - data.min(axis=-1, keepdims=True))
+        - 1
+    )
+    offset = np.zeros((C, T))
+    for idx in range(C - 1):
+        # offset[idx + 1] = -(np.abs(np.min(data[idx])) + np.abs(np.max(data[idx + 1])))
+        offset[idx + 1] = -2 * (idx + 1)
+    ax.plot(time_vector, data.T + offset.T, color="gray", linewidth=1)
+    ax.set_xlim(time_vector[0], time_vector[-1])
+    ax.set_yticks(ticks=offset[:, 0], labels=channel_names)
+    plt.show()

@@ -11,16 +11,19 @@ from dosed.trainers import trainers
 from dosed.preprocessing import GaussianNoise, RescaleNormal, Invert
 import matplotlib.pyplot as plt
 import numpy as np
+from typing import List, Optional, Tuple
+
 
 
 def main():
     seed = 2019
+    #h5_directory = 'D:/dd2'
     #h5_directory = 'D:/dosed'
     #h5_directory = "C:/Users/Nullerh/Documents/DTU_SCHOOL_WORK/dosed_no_change/data/h5"
     h5_directory = '/scratch/s194277/mros/h5_full/'
     train, validation, test = get_train_validation_test(h5_directory,
                                                         percent_test=0,
-                                                        percent_validation=10,
+                                                        percent_validation=20,
                                                         seed=seed)
 
     print("Number of records train:", len(train))
@@ -163,7 +166,7 @@ def main():
         signals = [
             {
                 'h5_path': '/eeg_0',
-                'fs': 64,
+                'fs': 128,
                 'processing': {
                     "type": "clip_and_normalize",
                     "args": {
@@ -174,7 +177,7 @@ def main():
             },
             {
                 'h5_path': '/eeg_1',
-                'fs': 64,
+                'fs': 128,
                 'processing': {
                     "type": "clip_and_normalize",
                     "args": {
@@ -206,7 +209,7 @@ def main():
     }
 
     dataset_validation = dataset(records=validation, **dataset_parameters)
-    #dataset_test = dataset(records=test, **dataset_parameters)
+    dataset_test = dataset(records=test, **dataset_parameters)
 
     # for training add data augmentation
     dataset_parameters_train = {
@@ -219,9 +222,9 @@ def main():
     dataset_parameters_train.update(dataset_parameters)
     dataset_train = dataset(records=train, **dataset_parameters_train)
 
-    default_event_sizes = [3, 15, 30]
-    k_max = 10
-    kernel_size = 5
+    default_event_sizes = [3, 10, 20]
+    k_max = 8
+    kernel_size = 3
     probability_dropout = 0.1
     device = torch.device("cuda")
 
@@ -239,7 +242,7 @@ def main():
         "k_max": k_max,
         "kernel_size": kernel_size,
         "pdrop": probability_dropout,
-        "fs": sampling_frequency,  # just used to print architecture info with right time
+        "fs": 128,  # just used to print architecture info with right time
         "input_shape": dataset_train.input_shape,
         "number_of_classes": dataset_train.number_of_classes,
     }
@@ -247,19 +250,19 @@ def main():
     net = net.to(device)
 
     optimizer_parameters = {
-        "lr": 5e-4,
+        "lr": 5e-3,
         "weight_decay": 1e-8,
     }
     loss_specs = {
         "type": "focal",
         "parameters": {
-            "number_of_classes": 3,
+            "number_of_classes": len(events),
             "alpha": 0.25,
             "gamma": 2,
             "device": torch.device("cuda"),
         }
     }
-    epochs = 50
+    epochs = 200
 
     trainer = trainers["adam"](
         net,
@@ -270,10 +273,10 @@ def main():
             "num_events": 3,
             "output_dir": os.getcwd(),
             "output_fname": 'train_history.json',
-            "metrics": ["precision", "recall", "f1"],
-            "name_events": ["arousal", "leg movement", "Sleep-disordered breathing"]
+            "metrics": ["f1", "precision", "recall"],
+            "name_events": ["AR","LM","SDB"]
         },
-        metrics=["precision", "recall", "f1"],
+        metrics=["f1", "precision", "recall"],
         metric_to_maximize="f1",
         matching_overlap=0.5,
     )

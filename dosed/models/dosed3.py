@@ -14,10 +14,10 @@ class DOSED3(BaseNet):
                  number_of_classes,
                  detection_parameters,
                  default_event_sizes,
-                 k_max=6,
-                 kernel_size=5,
+                 k_max=8,
+                 kernel_size=3,
                  pdrop=0.1,
-                 fs=256):
+                 fs=128):
 
         super(DOSED3, self).__init__()
         self.number_of_channels, self.window_size = input_shape
@@ -49,7 +49,7 @@ class DOSED3(BaseNet):
                             in_channels=4 * (2 ** (k - 1)) if k > 1 else self.number_of_channels,
                             out_channels=4 * (2 ** k),
                             kernel_size=self.kernel_size,
-                            padding=2
+                            padding=1
                         )),
                         ("batchnorm_{}".format(k - 1), nn.BatchNorm1d(4 * (2 ** k))),
                         ("relu_{}".format(k), nn.ReLU()),
