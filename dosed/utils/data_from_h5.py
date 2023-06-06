@@ -5,10 +5,10 @@ import numpy as np
 import h5py
 
 from ..preprocessing import normalizers
-from scipy.interpolate import interp1d
+#from scipy.interpolate import interp1d
 
 
-def get_h5_data(filename, signals, fs=64):
+def get_h5_data(filename, signals, fs=128):
     with h5py.File(filename, "r") as h5:
         try:
             # For MrOS data
