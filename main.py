@@ -22,7 +22,7 @@ def main():
     #h5_directory = "C:/Users/Nullerh/Documents/DTU_SCHOOL_WORK/dosed_no_change/data/h5"
     h5_directory = '/scratch/s194277/mros/h5_full/'
     train, validation, test = get_train_validation_test(h5_directory,
-                                                        percent_test=0,
+                                                        percent_test=1,
                                                         percent_validation=20,
                                                         seed=seed)
 
@@ -262,7 +262,7 @@ def main():
             "device": torch.device("cuda"),
         }
     }
-    epochs = 200
+    epochs = 100
 
     trainer = trainers["adam"](
         net,
