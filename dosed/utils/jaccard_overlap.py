@@ -10,7 +10,10 @@ def jaccard_overlap(localizations_a, localizations_b):
     A = localizations_a.size(0)
     B = localizations_b.size(0)
     # intersection
-    print(localizations_a.shape, localizations_b.shape)
+
+    if localizations_b.shape == 0:
+        return 0
+
     max_min = torch.max(localizations_a[:, 0].unsqueeze(1).expand(A, B),
                         localizations_b[:, 0].unsqueeze(0).expand(A, B))
     min_max = torch.min(localizations_a[:, 1].unsqueeze(1).expand(A, B),

@@ -17,13 +17,13 @@ from typing import List, Optional, Tuple
 
 def main():
     seed = 2019
-    #h5_directory = 'D:/dd2'
+    h5_directory = 'D:/dd2'
     #h5_directory = 'D:/dosed'
     #h5_directory = "C:/Users/Nullerh/Documents/DTU_SCHOOL_WORK/dosed_no_change/data/h5"
-    h5_directory = '/scratch/s194277/mros/h5_full/'
+    #h5_directory = '/scratch/s194277/mros/h5_full/'
     train, validation, test = get_train_validation_test(h5_directory,
-                                                        percent_test=1,
-                                                        percent_validation=20,
+                                                        percent_test=50,
+                                                        percent_validation=50,
                                                         seed=seed)
 
     print("Number of records train:", len(train))
@@ -250,7 +250,7 @@ def main():
     net = net.to(device)
 
     optimizer_parameters = {
-        "lr": 5e-3,
+        "lr": 1e-3,
         "weight_decay": 1e-8,
     }
     loss_specs = {
