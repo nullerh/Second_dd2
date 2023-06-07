@@ -222,7 +222,7 @@ def main():
     dataset_parameters_train.update(dataset_parameters)
     dataset_train = dataset(records=train, **dataset_parameters_train)
 
-    default_event_sizes = [3, 10, 20]
+    default_event_sizes = [3, 10, 25]
     k_max = 8
     kernel_size = 3
     probability_dropout = 0.1
@@ -251,7 +251,7 @@ def main():
 
     optimizer_parameters = {
         "lr": 1e-4,
-        "weight_decay": 1e-8,
+        "weight_decay": 1e-4,
     }
     loss_specs = {
         "type": "focal",
