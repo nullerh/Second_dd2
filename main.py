@@ -31,7 +31,7 @@ def main():
     print("Number of records test:", len(test))
     batch_size = 128
     window = 120  # window duration in seconds
-    ratio_positive = 0.5  # When creating the batch, sample containing at least one spindle will be drawn with that probability
+    ratio_positive = 1. # When creating the batch, sample containing at least one spindle will be drawn with that probability
     torch.cuda.empty_cache()
     fs = 128
 
@@ -250,7 +250,7 @@ def main():
     net = net.to(device)
 
     optimizer_parameters = {
-        "lr": 1e-3,
+        "lr": 1e-4,
         "weight_decay": 1e-8,
     }
     loss_specs = {
