@@ -53,11 +53,12 @@ def compute_metrics_dataset(
             # Select current true events
             events = test_dataset.get_record_events(record)[event_num]
 
-            # Compute_metrics(events, predicted_events, threshold)
-            for metric in metrics.keys():
-                metrics_test[event_num][metric].append(metrics[metric](
-                    predicted_events,
-                    events))
+            if len(events) != 0:
+                # Compute_metrics(events, predicted_events, threshold)
+                for metric in metrics.keys():
+                    metrics_test[event_num][metric].append(metrics[metric](
+                        predicted_events,
+                        events))
 
     # If for any event and record the network predicted events, return -1
     if found_some_events is False:
