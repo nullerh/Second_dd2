@@ -233,7 +233,7 @@ def main():
     net_parameters = {
         "detection_parameters": {
             "overlap_non_maximum_suppression": 0.5,
-            "classification_threshold": 0.7
+            "classification_threshold": 0.5
         },
         "default_event_sizes": [
             default_event_size * sampling_frequency
