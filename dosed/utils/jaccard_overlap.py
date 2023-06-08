@@ -3,7 +3,6 @@ import torch
 
 def jaccard_overlap(localizations_a, localizations_b):
     """Jaccard overlap between two segments A ∩ B / (LENGTH_A + LENGTH_B - A ∩ B)
-
     localizations_a: tensor of localizations
     localizations_a: tensor of localizations
     """
@@ -20,5 +19,5 @@ def jaccard_overlap(localizations_a, localizations_b):
         lentgh_b = (localizations_b[:, 1] - localizations_b[:, 0]).unsqueeze(0).expand(A, B)
         overlaps = intersection / (lentgh_a + lentgh_b - intersection)
     except(IndexError):
-        overlaps = None
+        overlaps = torch.zeros((A, 1))
     return overlaps
