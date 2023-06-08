@@ -271,7 +271,7 @@ def main():
         epochs=epochs,
         logger_parameters={
             "num_events": 3,
-            "output_dir": os.getcwd(),
+            "output_dir": "/scratch/s194277/dd2/hist.json",
             "output_fname": 'train_history.json',
             "metrics": ["f1", "precision", "recall"],
             "name_events": ["AR","LM","SDB"]
