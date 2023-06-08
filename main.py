@@ -222,7 +222,7 @@ def main():
     dataset_parameters_train.update(dataset_parameters)
     dataset_train = dataset(records=train, **dataset_parameters_train)
 
-    default_event_sizes = [3, 10, 25]
+    default_event_sizes = [3, 5, 10, 25]
     k_max = 8
     kernel_size = 3
     probability_dropout = 0.1
