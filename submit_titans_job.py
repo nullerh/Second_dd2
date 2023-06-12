@@ -8,9 +8,9 @@ JOBS = [
         "partition": "titans",
         "reservation": "comp-gpu13",  # This is my GPU node, comment this line and remove line 27, if you wish to send the job out to all nodes
         "time": "4-00:00:00",  # Days-Hours:Minutes:Seconds
-        "ncpus": 8,  # Number of CPU cores
+        "ncpus": 30,  # Number of CPU cores
         "gpus": 1,  # Number of GPUs
-        "memory": "128GB",  # This is total RAM, change this accordingly to use
+        "memory": "220GB",  # This is total RAM, change this accordingly to use
         "command": "python main.py",
         "log_path": "/scratch/s194277/"  # Usually this is your scratch space
 
